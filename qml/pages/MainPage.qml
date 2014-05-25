@@ -129,6 +129,10 @@ Page {
 
         Camera {
             id: camera
+            focus {
+                focusMode: Camera.FocusContinuous
+                focusPointMode: Camera.FocusPointCenter
+            }
         }
         z: 2
     }
@@ -194,9 +198,9 @@ Page {
         }
         z: 10
         Row {
-            spacing: Theme.paddingLarge
             Button {
                 id: measureButton
+                width: page.width / 2
                 text: qsTr("Get distance");
                 onClicked: {
                     if (!rotationSensor.active && !isDistance && !isHeight) {
@@ -212,6 +216,7 @@ Page {
             }
             Button {
                 id: heightButton
+                width: page.width / 2
                 text: qsTr("Get height");
                 onClicked: {
                     if (!rotationSensor.active && !isDistance && !isHeight) {
@@ -231,17 +236,43 @@ Page {
                 }
             }
         }
-        Button {
-            id: cameraButton
-            anchors.horizontalCenter: parent.horizontalCenter
-            text: qsTr("Take picture");
-            onClicked: {
-                if (isFinite(_distance) && isFinite(_height)) {
-                    camera.imageCapture.capture();
+        Row {
+            IconButton {
+                id: zoomOut
+                width: page.width / 3
+                icon.source: "image://theme/icon-camera-zoom-out"
+                onClicked: {
+                    camera.digitalZoom -= 0.5
+                }
+            }
+            IconButton {
+                id: cameraButton
+                width: page.width / 3
+                icon.source: "image://theme/icon-camera-shutter-release"
+                onClicked: {
+                    //anim.restart();
+                    if (isFinite(_distance) && isFinite(_height)) {
+                        camera.imageCapture.capture();
+
+                    }
+                }
+                /*
+                SequentialAnimation {
+                    id: anim
+                    NumberAnimation { target: cameraButton; property: "opacity"; to: 0.25; duration: 250 }
+                    NumberAnimation { target: cameraButton; property: "opacity"; to: 1.0; duration: 250 }
+                }
+                */
+            }
+            IconButton {
+                id: zoomIn
+                width: page.width / 3
+                icon.source: "image://theme/icon-camera-zoom-in"
+                onClicked: {
+                    camera.digitalZoom += 0.5
                 }
             }
         }
-
     }
     Connections {
         target: camera.imageCapture
